@@ -1,44 +1,12 @@
-# FITNESS OS Prototype
-
-Vanilla HTML/CSS/JavaScript prototype. No npm, build step, framework, or extra package required.
-
-## Run locally
-1. Open this folder in VS Code.
-2. Right-click `index.html` → **Open with Live Server**.
-3. The prototype opens in your browser. If you do not use Live Server, use a local static server because the app uses JavaScript modules.
-
-## Screens and prototype routes
-- `#/onboarding` — 01 Profile setup
-- `#/dashboard` — 02 Today Dashboard
-- `#/training` — 03 Training Overview
-- `#/training/active` — 04 Active Workout
-- `#/training/history` — 05 Workout History
-- `#/running` — 06 Run Dashboard
-- `#/running/detail` — 07 Run Detail
-- `#/running/log` — Manual run entry
-- `#/nutrition`, `#/progress`, `#/profile`, `#/integrations` — upcoming modules
-
-## Clickable prototype flows
-- Dashboard → Training → Start workout → Active Workout
-- Training → View all completed sessions → Workout History → expand a session → Repeat workout
-- Bottom navigation → Running → choose an activity → Run Detail
-- Run Dashboard → **Ghi nhận** → enter a manual run → save → back to Run Dashboard
-- Run Detail → share action (native share sheet when supported, clipboard fallback otherwise)
-
-Workout history filters and search are interactive. Manual run entries are saved in browser LocalStorage. Demo metrics and historical sessions are sample data. Apple Health and Strava are not connected to live accounts yet; the labels in this prototype indicate intended data sources only.
-
-
-## Prototype screens 08–10
-- `#/nutrition`: Nutrition dashboard with calorie/macros summary, meal log, add/remove food and water tracking.
-- `#/nutrition/add?meal=Bữa trưa`: Food search, category filters, quick-add and custom food form.
-- `#/progress`: Body metrics dashboard with weight trend and editable weight/waist/body-fat measurements.
-
-Nutrition entries and body measurements are stored locally in `localStorage`. These are prototype data flows; Apple Health and Strava APIs are not connected yet.
-
-
-## v5 – 11–13
-- `#/progress`: 7/30/90/all-day progress with body metrics entry.
-- `#/body-metrics`: existing body measurements form.
-- `#/integrations`: Apple Health and Strava **demonstration only**. No live OAuth or HealthKit access.
-- `#/profile`: editable display name, notifications setting, local JSON export and reset.
-- Dashboard avatar → Profile → Integrations; bottom Progress tab → Progress → Body Metrics.
+import { loadState } from "../../core/storage.js";
+import { renderBottomNav } from "../shared-nav.js";
+const fmt=n=>Number(n).toLocaleString('vi-VN',{maximumFractionDigits:1});
+export function renderBodyMetrics(){
+ const saved=loadState({}), profile=saved.profile||{}, records=saved.bodyMetrics||[];
+ const current=records.at(-1)||{weight:Number(profile.weight)||71.8,waist:78.5,bodyFat:16.2,date:new Date().toISOString()};
+ const previous=records.at(-2), delta=previous?current.weight-previous.weight:-0.7;
+ const points=(records.length?records:[{weight:73.8},{weight:73.4},{weight:74},{weight:73.1},{weight:72.8},{weight:72.3},current]).slice(-7);
+ const min=Math.min(...points.map(x=>x.weight))-0.5,max=Math.max(...points.map(x=>x.weight))+0.5;
+ const coords=points.map((x,i)=>`${12+i*(276/Math.max(1,points.length-1))},${82-((x.weight-min)/(max-min||1))*58}`).join(' ');
+ return `<section class="screen app-screen metrics-screen"><header class="page-header"><h1>Chỉ số cơ thể</h1><button class="btn btn-primary" id="show-metric-form">＋ Cập nhật</button></header><section class="weight-chart panel"><div class="weight-chart-top"><div><small>Cân nặng hiện tại</small><div class="weight-number">${fmt(current.weight)} <small>kg</small></div><span class="trend-pill">${delta>0?'+':''}${fmt(delta)} kg / lần đo</span></div><div class="height-number">${fmt(current.waist)} cm<small>Vòng eo</small></div></div><svg viewBox="0 0 300 112" role="img" aria-label="Biểu đồ cân nặng"><polyline points="${coords}" fill="none" stroke="#c7f36b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${coords.split(' ').at(-1).split(',')[0]}" cy="${coords.split(' ').at(-1).split(',')[1]}" r="3.5" fill="#c7f36b"/></svg><div class="chart-dates"><span>Đầu kỳ</span><span>Hiện tại</span></div></section><div class="metric-quick-grid"><article class="panel"><small>Vòng eo</small><b>${fmt(current.waist)} cm</b><span>${previous?fmt(current.waist-previous.waist)+' cm':'—'}</span></article><article class="panel"><small>Mỡ cơ thể</small><b>${fmt(current.bodyFat)}%</b><span>${previous?fmt(current.bodyFat-previous.bodyFat)+'%':'—'}</span></article></div><section class="metric-form-card panel" id="metric-form-card"><h2>Thêm số đo mới</h2><form id="body-metric-form"><label>Cân nặng (kg)<input name="weight" type="number" step="0.1" min="30" max="300" value="${current.weight}" required></label><label>Vòng eo (cm)<input name="waist" type="number" step="0.1" min="30" max="200" value="${current.waist}" required></label><label>Mỡ cơ thể (%)<input name="bodyFat" type="number" step="0.1" min="2" max="70" value="${current.bodyFat}" required></label><button class="btn btn-primary" type="submit">Lưu số đo</button></form></section><section class="metric-note panel"><b>Ghi chú thành phần cơ thể</b><p>Theo dõi cân nặng, vòng eo và tỷ lệ mỡ theo thời gian. Hãy đo trong điều kiện tương tự để so sánh tiến độ chính xác hơn.</p></section>${renderBottomNav('progress')}</section>`;
+}

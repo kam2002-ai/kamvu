@@ -1,27 +1,44 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101210">
-  <meta name="description" content="FITNESS OS - Your personal fitness companion">
-  <title>FITNESS OS | Personal Fitness Tracker</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="FITNESS OS">
-  <link rel="apple-touch-icon" href="./icons/icon-180.png">
-  <link rel="manifest" href="./manifest.json">
-  <link rel="stylesheet" href="./css/main.css">
-</head>
-<body>
-  <div id="app">
-    <div class="app-loading">
-      <span class="brand-mark">ϟ</span>
-      <strong>FITNESS OS</strong>
-      <p>Đang khởi tạo ứng dụng...</p>
+export function renderTraining() {
+  const days = [
+    ["T2","Ngực + Tay sau","Đã lên kế hoạch","done"],
+    ["T3","Lưng + Tay trước","Hôm nay · 6 bài · 65 phút","today"],
+    ["T4","Chân","Đã lên kế hoạch",""],
+    ["T5","Vai","Đã lên kế hoạch",""],
+    ["T6","Thân trên","Đã lên kế hoạch",""],
+    ["T7","Chạy bộ","Easy run 5 km",""],
+    ["CN","Nghỉ","Phục hồi","rest"]
+  ];
+  const groups = [["Ngực",82],["Lưng",74],["Chân",60],["Vai",48],["Tay",65]];
+  return `
+  <section class="screen app-screen training-screen">
+    <header class="page-header"><h1>Luyện tập</h1><button class="icon-button" aria-label="Lịch tập">▣</button></header>
+    <a class="btn btn-primary btn-full start-workout" href="#/training/active">▷ &nbsp; Bắt đầu tập luyện</a>
+    <div class="training-stats">
+      <div class="mini-stat"><span>♧</span><b>34,8 t</b><small>Volume tuần</small></div>
+      <div class="mini-stat"><span>◷</span><b>4h12</b><small>Thời gian tập</small></div>
+      <div class="mini-stat"><span>▤</span><b>86 sets</b><small>Tổng số sets</small></div>
     </div>
-  </div>
-  <script type="module" src="./js/app.js"></script>
-  <script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(console.warn));</script>
-</body>
-</html>
+    <div class="section-heading"><h2>Lịch tập tuần</h2><a href="#/profile">Chỉnh split</a></div>
+    <div class="schedule-list">
+      ${days.map(([day,title,sub,status])=>`
+        <a class="schedule-item ${status}" href="${status==="today"?"#/training/active":"#/training"}">
+          <span class="day-badge">${status==="done"?"✓":day}</span>
+          <span class="schedule-copy"><b>${title}</b><small>${sub}</small></span>
+          <span class="chevron">${status==="rest"?"◷":"›"}</span>
+        </a>`).join("")}
+    </div>
+    <section class="muscle-panel panel">
+      <div class="section-heading"><h2>Phân bổ nhóm cơ</h2></div>
+      ${groups.map(([name,value])=>`<div class="muscle-row"><span>${name}</span><i><b style="width:${value}%"></b></i><small>${value}%</small></div>`).join("")}
+    </section>
+    <section class="content-section completed-section">
+      <div class="section-heading"><h2>Buổi tập đã hoàn thành</h2><a href="#/training/history">Xem tất cả</a></div>
+      <a class="list-row" href="#/training/history"><span class="row-icon">♧</span><span><b>Ngực + Tay sau · 9.200 kg</b><small>Hôm qua · 62 phút · 24 sets</small></span><span class="chevron">›</span></a>
+    </section>
+    ${renderBottomNav("training")}
+  </section>`;
+}
+function renderBottomNav(active) {
+  const items=[["dashboard","▦","Hôm nay","/dashboard"],["training","♧","Luyện tập","/training"],["running","⌁","Chạy bộ","/running"],["nutrition","♡","Dinh dưỡng","/nutrition"],["progress","⌁","Tiến độ","/progress"]];
+  return `<nav class="bottom-nav">${items.map(([key,icon,label,path])=>`<a class="${active===key?"active":""}" href="#${path}"><span>${icon}</span><small>${label}</small></a>`).join("")}</nav>`;
+}
