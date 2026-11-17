@@ -1,0 +1,11 @@
+export function renderRunDetail(){
+ const pace=[46,57,52,62,58,72,64,78,88,96];
+ return `<section class="screen app-screen run-detail-screen">
+  <header class="run-detail-header"><a class="icon-button" href="#/running" aria-label="Quay lại">‹</a><div><h1>Long Run cuối tuần</h1><small>10/11/2026 · 06:12 · Đồng bộ từ Strava</small></div><button class="icon-button" id="share-run" aria-label="Chia sẻ">♧</button></header>
+  <section class="run-map-card panel"><span class="run-route-label">HỒ GƯƠM LOOP · 10 KM</span><svg viewBox="0 0 320 180" role="img" aria-label="Biểu đồ đường chạy"><path d="M20 140 C38 132 38 80 82 72 S130 112 168 94 S218 28 255 38 S286 62 302 52" fill="none" stroke="#C6F36B" stroke-width="4" stroke-linecap="round"/><circle cx="20" cy="140" r="6" fill="#F4F5F0"/><circle cx="302" cy="52" r="6" fill="#C6F36B"/></svg></section>
+  <div class="run-detail-stats panel"><div><b>10,0 km</b><small>Quãng đường</small></div><div><b>1:04:20</b><small>Thời gian</small></div><div><b>6:26 /km</b><small>Pace TB</small></div><div><b>152 bpm</b><small>Nhịp tim TB</small></div><div><b>312 kcal</b><small>Calories</small></div><div><b>86 m</b><small>Độ cao</small></div></div>
+  <section class="panel pace-panel"><div class="section-heading"><h2>Pace theo km</h2><small>min/km</small></div><div class="pace-bars">${pace.map((v,i)=>`<div><i style="height:${v}%" class="${i>7?'fast':''}"></i><small>${i===0?'km 1':i===4?'km 5':i===9?'km 10':''}</small></div>`).join('')}</div></section>
+  <section class="panel heart-panel"><div class="section-heading"><h2>Nhịp tim</h2><b>Zone 2 · 78%</b></div><svg viewBox="0 0 320 80" role="img" aria-label="Biểu đồ nhịp tim"><polyline points="0,49 20,45 40,50 60,39 80,44 100,34 120,40 140,31 160,36 180,26 200,33 220,24 240,30 260,20 280,27 300,16 320,22" fill="none" stroke="#EAB45B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="heart-zones"><div><b>138</b><small>Min bpm</small></div><div><b>152</b><small>TB bpm</small></div><div><b>171</b><small>Max bpm</small></div></div></section>
+  <div class="sync-note panel"><span>♢</span><p><b>Nguồn: Strava</b> · Đồng bộ Apple Health 07:02 · Dữ liệu chỉ lưu trên thiết bị</p></div>
+ </section>`;
+}
