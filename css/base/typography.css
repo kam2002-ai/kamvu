@@ -1,0 +1,8 @@
+body {
+  font-family: var(--font);
+  background: #e9eae7;
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p { margin-top: 0; }
+button, input { font-family: inherit; }
